@@ -66,3 +66,42 @@ public:
                 riwayat.push("Dikelompokkan " + string(daftarMataKuliah[i].nama) + " sebagai Sulit");
         }
     }
+    vector<MataKuliah> jadwalKnapsack(int kapasitasHarian) {
+        int n = daftarMataKuliah.size();
+        vector<vector<int>> dp(n + 1, vector<int>(kapasitasHarian + 1, 0));
+        vector<vector<bool>> simpan(n + 1, vector<bool>(kapasitasHarian + 1, false));
+
+        for (int i = 1; i <= n; i++) {
+            for (int w = 0; w <= kapasitasHarian; w++) {
+                if (daftarMataKuliah[i - 1].waktuBelajar <= w) {
+                    int nilai = daftarMataKuliah[i - 1].efektivitas + dp[i - 1][w - daftarMataKuliah[i - 1].waktuBelajar];
+                    if (nilai > dp[i - 1][w]) {
+                        dp[i][w] = nilai;
+                        simpan[i][w] = true;
+                    } else {
+                        dp[i][w] = dp[i - 1][w];
+                    }
+                } else {
+                    dp[i][w] = dp[i - 1][w];
+                }
+            }
+        }
+
+    vector<MataKuliah> jadwal;
+        int w = kapasitasHarian;
+        for (int i = n; i > 0; i--) {
+            if (simpan[i][w]) {
+                jadwal.push_back(daftarMataKuliah[i - 1]);
+                antrianJadwal.push(daftarMataKuliah[i - 1]);
+                w -= daftarMataKuliah[i - 1].waktuBelajar;
+            }
+        }
+        return jadwal;
+    }
+
+    void tampilkanKategori() {
+        cetakHeaderTabel("Kategori Mata Kuliah");
+        cout << "\nMudah (<=30):\n";
+        for (const auto& mk : mataKuliahMudah)
+            cout << left << setw(20) << mk.nama << setw(15) << mk.tingkatKesulitan
+                 << setw(15) << mk.waktuBelajar << setw(10) << mk.efektivitas << "\n";
