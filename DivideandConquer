@@ -35,3 +35,34 @@ private:
         cout << string(60, '-') << "\n";
     }
 
+public:
+    void tambahMataKuliah(const char* nama, const string& desk, int kesulitan, int waktu, int efek) {
+        MataKuliah mk;
+        strncpy(mk.nama, nama, sizeof(mk.nama) - 1);
+        mk.nama[sizeof(mk.nama) - 1] = '\0';
+        mk.deskripsi = desk;
+        mk.tingkatKesulitan = kesulitan;
+        mk.waktuBelajar = waktu;
+        mk.efektivitas = efek;
+        daftarMataKuliah.push_back(mk);
+        riwayat.push("Ditambahkan: " + string(mk.nama));
+    }
+
+    void kelompokkanMataKuliah(int kiri, int kanan) {
+        if (kiri >= kanan) return;
+        int tengah = (kiri + kanan) / 2;
+        kelompokkanMataKuliah(kiri, tengah);
+        kelompokkanMataKuliah(tengah + 1, kanan);
+
+        for (int i = kiri; i <= kanan; i++) {
+            if (daftarMataKuliah[i].tingkatKesulitan <= 30)
+                mataKuliahMudah.push_back(daftarMataKuliah[i]),
+                riwayat.push("Dikelompokkan " + string(daftarMataKuliah[i].nama) + " sebagai Mudah");
+            else if (daftarMataKuliah[i].tingkatKesulitan <= 60)
+                mataKuliahSedang.push_back(daftarMataKuliah[i]),
+                riwayat.push("Dikelompokkan " + string(daftarMataKuliah[i].nama) + " sebagai Sedang");
+            else
+                mataKuliahSulit.push_back(daftarMataKuliah[i]),
+                riwayat.push("Dikelompokkan " + string(daftarMataKuliah[i].nama) + " sebagai Sulit");
+        }
+    }
