@@ -1,1 +1,37 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <stack>
+#include <queue>
+#include <string>
+#include <cstring>
+#include <iomanip>
+#include <algorithm>
+#include <limits> // Untuk membersihkan buffer input
+
+using namespace std;
+
+struct MataKuliah {
+    char nama[50];
+    string deskripsi;
+    int tingkatKesulitan;
+    int waktuBelajar;
+    int efektivitas;
+};
+
+class PenjadwalBelajar {
+private:
+    vector<MataKuliah> daftarMataKuliah;
+    list<MataKuliah> mataKuliahMudah, mataKuliahSedang, mataKuliahSulit;
+    stack<string> riwayat;
+    queue<MataKuliah> antrianJadwal;
+
+    void cetakHeaderTabel(const string& judul) {
+        cout << "\n" << string(60, '=') << "\n";
+        cout << judul << "\n";
+        cout << string(60, '-') << "\n";
+        cout << left << setw(20) << "Nama Matkul" << setw(15) << "Kesulitan"
+             << setw(15) << "Waktu (min)" << setw(10) << "Efektivitas" << "\n";
+        cout << string(60, '-') << "\n";
+    }
 
