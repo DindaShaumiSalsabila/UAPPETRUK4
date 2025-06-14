@@ -105,3 +105,95 @@ public:
         for (const auto& mk : mataKuliahMudah)
             cout << left << setw(20) << mk.nama << setw(15) << mk.tingkatKesulitan
                  << setw(15) << mk.waktuBelajar << setw(10) << mk.efektivitas << "\n";
+
+cout << "\nSedang (31-60):\n";
+        for (const auto& mk : mataKuliahSedang)
+            cout << left << setw(20) << mk.nama << setw(15) << mk.tingkatKesulitan
+                 << setw(15) << mk.waktuBelajar << setw(10) << mk.efektivitas << "\n";
+
+        cout << "\nSulit (>60):\n";
+        for (const auto& mk : mataKuliahSulit)
+            cout << left << setw(20) << mk.nama << setw(15) << mk.tingkatKesulitan
+                 << setw(15) << mk.waktuBelajar << setw(10) << mk.efektivitas << "\n";
+
+        cout << string(60, '=') << "\n";
+    }
+
+    void tampilkanRiwayat() {
+        cout << "\n" << string(60, '=') << "\n";
+        cout << "Riwayat Operasi\n" << string(60, '-') << "\n";
+        stack<string> temp = riwayat;
+        if (temp.empty()) cout << "Belum ada operasi.\n";
+        while (!temp.empty()) {
+            cout << "- " << temp.top() << "\n";
+            temp.pop();
+        }
+        cout << string(60, '=') << "\n";
+    }
+
+    void tampilkanJadwalHarian(int kapasitasHarian) {
+        cetakHeaderTabel("Jadwal Belajar Harian (Kapasitas: " + to_string(kapasitasHarian) + " menit)");
+        vector<MataKuliah> jadwal = jadwalKnapsack(kapasitasHarian);
+        int totalWaktu = 0, totalEfektivitas = 0;
+        for (const auto& mk : jadwal) {
+            cout << left << setw(20) << mk.nama << setw(15) << mk.tingkatKesulitan
+                 << setw(15) << mk.waktuBelajar << setw(10) << mk.efektivitas << "\n";
+            totalWaktu += mk.waktuBelajar;
+            totalEfektivitas += mk.efektivitas;
+        }
+        cout << string(60, '-') << "\n";
+        cout << left << setw(20) << "Total" << setw(15) << "" << setw(15) << totalWaktu
+             << setw(10) << totalEfektivitas << "\n";
+        cout << string(60, '=') << "\n";
+    }
+};
+
+int dapatkanInputValid(const string& perintah, int min, int maks) {
+    int nilai;
+    while (true) {
+        cout << perintah;
+        if (cin >> nilai && nilai >= min && nilai <= maks) return nilai;
+        cout << "Input tidak valid! Masukkan angka antara " << min << " dan " << maks << ".\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+int main() {
+    PenjadwalBelajar penjadwal;
+    int jumlahMataKuliah;
+
+    cout << "\n=== Program Optimalisasi Jadwal Belajar Mahasiswa ===\n";
+    jumlahMataKuliah = dapatkanInputValid("Masukkan jumlah mata kuliah: ", 1, 100);
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Bersihkan newline
+
+    for (int i = 0; i < jumlahMataKuliah; i++) {
+        string nama, deskripsi;
+        int tingkatKesulitan, waktuBelajar, efektivitas;
+
+        cout << "\nMata Kuliah " << i + 1 << ":\n";
+        cout << "Nama (maks 49 karakter): ";
+        getline(cin, nama);
+        cout << "Deskripsi: ";
+        getline(cin, deskripsi);
+        tingkatKesulitan = dapatkanInputValid("Kesulitan (1-100): ", 1, 100);
+        waktuBelajar = dapatkanInputValid("Waktu belajar (menit, 1-300): ", 1, 300);
+        efektivitas = dapatkanInputValid("Efektivitas (1-200): ", 1, 200);
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Bersihkan newline
+
+        char namaC[50];
+        strncpy(namaC, nama.c_str(), sizeof(namaC) - 1);
+        namaC[sizeof(namaC) - 1] = '\0';
+
+        penjadwal.tambahMataKuliah(namaC, deskripsi, tingkatKesulitan, waktuBelajar, efektivitas);
+    }
+
+    penjadwal.kelompokkanMataKuliah(0, jumlahMataKuliah - 1);
+    penjadwal.tampilkanKategori();
+    penjadwal.tampilkanRiwayat();
+    int kapasitasHarian = dapatkanInputValid("\nMasukkan kapasitas waktu belajar harian (menit): ", 60, 600);
+    penjadwal.tampilkanJadwalHarian(kapasitasHarian);
+
+    cout << "\nTerima kasih telah menggunakan program ini!\n";
+    return 0;
+}
